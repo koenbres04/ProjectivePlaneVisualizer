@@ -1,5 +1,4 @@
 import numpy as np
-import time
 
 
 MARCHING_SQUARES_TABLE = [
@@ -28,7 +27,6 @@ def values_to_index(values):
         if v > 0:
             n += 1
         n = n << 1
-
     return n >> 1
 
 

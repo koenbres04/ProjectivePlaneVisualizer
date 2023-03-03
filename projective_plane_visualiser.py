@@ -112,7 +112,7 @@ class Moving(EditorState):
         if not editor.window.is_key_down(pygame.K_LSHIFT):
             new_cur = editor.window.cur_pos * editor.pixel_scale
             new_cur = np.concatenate((new_cur, np.array([1], dtype=float)))
-            if editor.window.cur_click[0]:
+            if editor.window.is_mouse_button_down(0):
                 old_cur = (editor.window.cur_pos - editor.window.delta_cur) * editor.pixel_scale
                 old_cur = np.concatenate((old_cur, np.array([1], dtype=float)))
             else:
@@ -126,7 +126,7 @@ class Moving(EditorState):
                 editor.inv_transform = editor.inv_transform.dot(inverse_rotation(old_cur, new_cur))
         else:
             zoom_factor = editor.scroll_zoom_factor ** editor.window.get_scroll_wheel_y()
-            if editor.window.cur_click[0]:
+            if editor.window.is_mouse_button_down(0):
                 delta_cur = editor.window.delta_cur * editor.pixel_scale
             else:
                 delta_cur = np.zeros(2, dtype=float)
@@ -176,7 +176,7 @@ class AffineSquishing(EditorState):
                                     self.pos1 + np.array([10., 0.]), 3, editor.text_color)
             editor.window.draw_line(self.pos1 + np.array([0., -10.]),
                                     self.pos1 + np.array([0., 10.]), 3, editor.text_color)
-            if not editor.window.cur_click[0]:
+            if not editor.window.is_mouse_button_down(0):
                 self.pos1 = self.pos2 = None
                 return
             pos1 = self.pos1*editor.pixel_scale
@@ -184,7 +184,6 @@ class AffineSquishing(EditorState):
             pos3 = editor.window.cur_pos*editor.pixel_scale
             matrix = inverse_affine_squishing(pos1, pos2, pos3)
             editor.inv_transform = self.start_inv_transform.dot(matrix)
-
 
 
 class LineToInftySelect(EditorState):

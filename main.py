@@ -3,7 +3,7 @@ from plane_objects import ProjectivePlaneDrawer, RED, BLUE, DARK_GREEN
 
 
 def stand_on_plane_example(drawer):
-    # draw 3 lines that help visualize the 'standing on a plane view'
+    # draw 3 lines that help visualize the 'standing on a plane' view
     drawer.set_color(RED)
     drawer.set_line_thickness(5)
     drawer.line((0, 0, 1), (1, 0, 0))

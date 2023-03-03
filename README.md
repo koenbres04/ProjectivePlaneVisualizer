@@ -24,17 +24,51 @@ During runtime the plane_distance can effectively be changed by zooming with and
 
 The visualization can be in different states and you can switch between these states using the following controls:
 
-- ESCAPE: this puts the visualizer into the 'moving' state. When in this state the user can press
+- ESCAPE: this puts the visualizer in the 'moving' state.
+This is the default state.
+In this state you can click and drag to move around the plane and scroll to zoom in and out.
+Moving corresponds to rotating the plane of projection around the origin
+and zooming corresponds to changing the scale with which we map this plane to the screen. (See the 'details of the projection' section for what this means.)
+You can also hold SHIFT while moving and zooming.
+When doing this the transformation is applied as an affine transformation on the current affine chart.
+Know that SHIFT-moving and zooming may heavily distort the objects in the space.
+The 'affine squishing mode' can be used to reverse this.
+When in the 'moving' state you can press
 	- D to take the dual of all the lines and points in the plane. 
 	This tends to put most objects close to the line at infinity, so it is recommended to have a large FOV when using this (see the bottom left corner).
-- P: this puts the visualizer in the 'point drawing' state.
-- ...
+	- R to reset the current transformation.
+- P: This puts the visualizer in the 'point drawing' state.
+Click on the screen to draw points.
+If you click on a line it snaps to place a point exactly on this line.
+- L: This puts the visualizer in the 'line drawing' state.
+Click at two points on the screen to draw a line between them.
+If you click on a point the line snaps to this point.
+- I: This puts the visualizer in the 'intersection drawing' state.
+Click on two lines to add their intersection point to the screen.
+- DELETE: This puts the visualizer in the 'deleting' state.
+Click on objects to delete them.
+If you click on a point on a line, it will prioritize the point.
+- Y: This puts the visualizer in the 'line to infinity' state.
+Click on a line to start an animation that gradually moves this line to be the line at infinity.
+- A: This puts the visualizer in the 'affine squishing' state.
+First click somewhere on the screen, this point will be the marked with a cross.
+Now click and drag another point on the screen away or to the cross.
+This will scale the plane along the line between the cross and the second clicked position.
+Like SHIFT moving and zooming, this is only an affine transformation of the plane and will leave the (current) line at infinity in place.
 
-## how it works
+## details of the projection
 
-...
+In the code, a point in the projective plane is stored as a 1-dimensional subspace of `R^3`.
+To project a point to the screen, we take the intersection of the corresponding subspace with the `z=1`-plane.
+The value `pixel_scale` determines at what scale these intersection points are mapped to the screen.
+The `pixel_scale` also determines the FOV seen on the bottom left of the screen.
+This is the angle that the screen covers when the projection plane is projected on the unit sphere.
+Moving, SHIFT moving and SHIFT zooming simply perform a linear transformation of `R^3` on the projection plane.
+In the code for convenience the inverse of this transformation is stored in the attribute `inv_transform` as a 3x3-matrix.
+Regular moving only multiplies `inv_transform` by rotations, so it does not distort the space much.
+
 
 ## dependencies
 
 The packages numpy and pygame are required.
-Due to the use of some later type hinting features the code requires python 3.9 or later.
+Due to the use of some newer type hinting features the code requires python 3.9 or later.

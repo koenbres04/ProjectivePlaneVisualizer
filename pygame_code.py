@@ -14,9 +14,9 @@ class PygameWindow:
         self.display = None
         self._do_quit = False
         self.clock = None
-        self.cur_pos = None
-        self.cur_click = None
-        self.delta_cur = (0, 0)
+        self._cur_pos = None
+        self._cur_click = None
+        self._delta_cur = None
         self.events = None
         self.scale_center = np.array(scale_center, dtype=float)
         self._key_tracking = dict()
@@ -37,9 +37,9 @@ class PygameWindow:
         pygame.display.set_caption(self._screen_title)
         self.clock = pygame.time.Clock()
         self.display.fill(self.background_color)
-        self.cur_pos = self._screen_to_np(pygame.mouse.get_pos())
-        self.cur_click = pygame.mouse.get_pressed()
-        self.delta_cur = np.zeros(2, dtype=float)
+        self._cur_pos = self._screen_to_np(pygame.mouse.get_pos())
+        self._cur_click = pygame.mouse.get_pressed(num_buttons=5)
+        self._delta_cur = np.zeros(2, dtype=float)
         self.events = pygame.event.get()
         for key in self._key_tracking.keys():
             self._key_tracking[key] = False
@@ -56,10 +56,10 @@ class PygameWindow:
         pygame.display.update()
         self.clock.tick(self.frame_rate)
         self.display.fill(self.background_color)
-        last_cur_pos = self.cur_pos
-        self.cur_pos = self._screen_to_np(pygame.mouse.get_pos())
-        self.delta_cur = self.cur_pos-last_cur_pos
-        self.cur_click = pygame.mouse.get_pressed()
+        last_cur_pos = self._cur_pos
+        self._cur_pos = self._screen_to_np(pygame.mouse.get_pos())
+        self._delta_cur = self._cur_pos-last_cur_pos
+        self._cur_click = pygame.mouse.get_pressed()
         self.events = pygame.event.get()
         for key in self._key_tracking.keys():
             self._key_down_tracking[key] = False
@@ -83,6 +83,17 @@ class PygameWindow:
 
     def quit(self):
         self._do_quit = True
+
+    @property
+    def cur_pos(self):
+        return self._cur_pos.copy()
+
+    @property
+    def delta_cur(self):
+        return self._delta_cur.copy()
+
+    def is_mouse_button_down(self, key):
+        return self._cur_click[key]
 
     def is_key_down(self, key):
         if key not in self._key_tracking:
